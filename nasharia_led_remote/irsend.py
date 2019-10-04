@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """LICENSE
 Copyright 2019 Hermann Krumrey <hermann@krumreyh.com>
 
@@ -19,35 +18,35 @@ along with nasharia-led-remote.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import time
-import argparse
-from puffotter.init import cli_start, argparse_add_verbosity
-from nasharia_led_remote import sentry_dsn
+from subprocess import Popen
 from nasharia_led_remote.commands import command_map
-from nasharia_led_remote.irsend import send_command
 
 
-def main(args: argparse.Namespace):
+def send_command(command: str, duration: int = 0):
     """
-    The led-remote main method
+    Sends a command using irsend
+    The command should have an entry in
+    :param command: The command to send
+    :param duration: The duration for which to send the signal.
     :return: None
     """
-    for key in args.keys:
-        send_command(key, args.duration)
-        time.sleep(1)
+    key_command = command_map.get(command, "")
+    if command == "":
+        print("Invalid command")
+        return
 
+    irsend_command = ["irsend", "", "NASHARIA", "KEY_" + key_command]
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    argparse_add_verbosity(parser)
-    parser.add_argument("keys", choices=command_map.keys(), nargs="+",
-                        help="The key to send")
-    parser.add_argument("--duration", type=int, default=0,
-                        help="How long to send the key press signal")
+    if duration <= 0:
+        irsend_command[1] = "send_once"
+        resp = Popen(irsend_command).wait()
 
-    cli_start(
-        main,
-        parser,
-        "Thanks for using nasharia-led-remote!",
-        "nasharia_led_remote",
-        sentry_dsn
-    )
+    else:
+        irsend_command[1] = "send_start"
+        resp = Popen(irsend_command).wait()
+        time.sleep(duration)
+        irsend_command[1] = "send_stop"
+        resp += Popen(irsend_command).wait()
+
+    if resp != 0:
+        print("Something went wrong. Is lirc configured correctly?")
