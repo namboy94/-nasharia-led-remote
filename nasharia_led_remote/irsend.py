@@ -31,7 +31,7 @@ def send_command(command: str, duration: int = 0):
     :return: None
     """
     key_command = command_map.get(command, "")
-    if command == "":
+    if key_command == "":
         print("Invalid command")
         return
 
