@@ -37,16 +37,20 @@ def send_command(command: str, duration: int = 0):
 
     irsend_command = ["irsend", "", "NASHARIA", "KEY_" + key_command]
 
-    if duration <= 0:
-        irsend_command[1] = "send_once"
-        resp = Popen(irsend_command).wait()
+    try:
+        if duration <= 0:
+            irsend_command[1] = "send_once"
+            resp = Popen(irsend_command).wait()
 
-    else:
-        irsend_command[1] = "send_start"
-        resp = Popen(irsend_command).wait()
-        time.sleep(duration)
-        irsend_command[1] = "send_stop"
-        resp += Popen(irsend_command).wait()
+        else:
+            irsend_command[1] = "send_start"
+            resp = Popen(irsend_command).wait()
+            time.sleep(duration)
+            irsend_command[1] = "send_stop"
+            resp += Popen(irsend_command).wait()
+    except FileNotFoundError:
+        print("irsend not installed!")
+        resp = 1
 
     if resp != 0:
         print("Something went wrong. Is lirc configured correctly?")

@@ -33,7 +33,9 @@ def main(args: argparse.Namespace):
     """
     for key in args.keys:
         send_command(key, args.duration)
-        time.sleep(1)
+
+        if len(args.keys) > 1:
+            time.sleep(1)
 
 
 if __name__ == "__main__":
