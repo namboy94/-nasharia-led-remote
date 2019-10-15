@@ -34,8 +34,10 @@ def main(args: argparse.Namespace):
     """
     for key in args.keys:
 
-        if key in ["ON", "OFF"]:
-            if (is_on() and key == "OFF") or (not is_on() and key == "ON"):
+        if key in ["ON", "OFF", "POWER"]:
+            if (is_on() and key == "OFF") \
+                    or (not is_on() and key == "ON") \
+                    or key == "POWER":
                 send_command(key)
                 set_power_state(not is_on())
 
