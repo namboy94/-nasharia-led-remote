@@ -20,6 +20,8 @@ LICENSE"""
 
 command_map = {
     "POWER": "POWER",
+    "ON": "POWER",
+    "OFF": "POWER",
     "BRIGHTNESS_DOWN": "BRIGHTNESSDOWN",
     "BRIGHTNESS_UP": "BRIGHTNESSUP",
     "COLOR_RED": "F1",

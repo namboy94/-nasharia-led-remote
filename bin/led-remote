@@ -24,6 +24,7 @@ from puffotter.init import cli_start, argparse_add_verbosity
 from nasharia_led_remote import sentry_dsn
 from nasharia_led_remote.commands import command_map
 from nasharia_led_remote.irsend import send_command
+from nasharia_led_remote.state import is_on, set_power_state
 
 
 def main(args: argparse.Namespace):
@@ -32,10 +33,17 @@ def main(args: argparse.Namespace):
     :return: None
     """
     for key in args.keys:
-        send_command(key, args.duration)
 
-        if len(args.keys) > 1:
-            time.sleep(1)
+        if key in ["ON", "OFF"]:
+            if (is_on() and key == "OFF") or (not is_on() and key == "ON"):
+                send_command(key)
+                set_power_state(not is_on())
+
+        else:
+            send_command(key, args.duration)
+
+            if len(args.keys) > 1:
+                time.sleep(1)
 
 
 if __name__ == "__main__":

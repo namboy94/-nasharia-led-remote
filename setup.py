@@ -18,7 +18,9 @@ along with nasharia-led-remote.  If not, see <http://www.gnu.org/licenses/>.
 LICENSE"""
 
 import os
+import json
 from setuptools import setup, find_packages
+from nasharia_led_remote.state import config_dir, state_file, set_state
 
 if __name__ == "__main__":
     setup(
@@ -46,3 +48,8 @@ if __name__ == "__main__":
         include_package_data=True,
         zip_safe=False
     )
+
+if not os.path.isdir(config_dir):
+    os.makedirs(config_dir)
+if not os.path.isfile(state_file):
+    set_state({"power": False})
